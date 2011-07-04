@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Plupload Java Runtime" default="build" basedir=".">
+  
+  <property description="Temp directory" name="tmp_dir" value="tmp" />
+  
+  <path id="java.classpath">
+      <fileset dir="src/java/libs">
+        <include name="*.jar"/>
+      </fileset>
+  </path>
+
+  <path id="tasks.classpath">
+    <pathelement location="."/>
+    <fileset dir="src/java/libs">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+  
+  <taskdef resource="proguard/ant/task.properties" classpath="tools/proguard.jar" />
+
+  <target name="compile" description="Compiles the plupload Java runtime.">
+    <mkdir dir="bin" />
+    <javac srcdir="src/java/src" destdir="bin" target="1.5">
+      <classpath refid="java.classpath"/>
+    </javac>
+  </target>
+
+  <target name="clean" description="Cleans the Java Runtime.">
+    <delete file="plupload.java.jar" />
+    <delete dir="bin"/>
+  </target>
+
+  <target name="unjar" description="Unjar the libs" >
+    <unjar dest="bin">
+      <fileset dir="src/java/libs">
+        <include name="httpclient-4.0.3.jar" />
+        <include name="httpcore-4.1.jar" />
+      </fileset>
+    </unjar>
+    <delete dir="bin/META-INF"/>
+  </target>
+
+  <target name="jar" depends="unjar" description="Jars the plupload Java runtime, the jar and its jar dependencies goes to the bin dir.">
+    <jar destfile="plupload.java.jar" basedir="bin">
+      <manifest>
+        <attribute name="Created-By" value="Cabo Communications A/S" />
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="sign-jar" description="Signs the Java applet jar. Before this run: keytool -genkey -alias plupload">
+    <signjar jar="plupload.java.jar" alias="plupload" storepass="123456" />
+  </target>
+
+  <target name="build" depends="clean, compile, jar, sign-jar">
+  </target>
+
+  <target name="proguard">
+    <proguard optimizationpasses="2">
+      -dontwarn org.apache.**
+      -injars      plupload.java.jar
+      -outjars     plupload.java.min.jar
+      -libraryjars ${java.home}/lib/rt.jar:${java.home}/lib/plugin.jar
+      -keep public class plupload.Plupload
+      -keep public class java.net.IDN
+      -keepclassmembers class java.net.IDN{
+       java.lang.String toUnicode(java.lang.String);
+      }
+      -keepclassmembers class plupload.Plupload {
+        void setFileFilters(java.lang.String);
+        void uploadFile(java.lang.String, java.lang.String, java.lang.String, int, int);
+        void removeFile(java.lang.String);
+        void clearFiles();
+        void openFileDialog();
+      }
+    </proguard>
+    <move file="plupload.java.min.jar" tofile="plupload.java.jar" />
+  </target>
+
+</project>
