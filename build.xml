@@ -52,7 +52,7 @@
     <signjar jar="plupload.java.jar" alias="plupload" storepass="123456" />
   </target>
 
-  <target name="build" depends="clean, compile, jar, sign-jar">
+  <target name="build" depends="clean, compile, jar, proguard, sign-jar">
   </target>
 
   <target name="proguard">
