@@ -22,7 +22,7 @@ In the root directory of Plupload Java Runtime where the build.xml file is you c
 
 `ant`
 
-Will compile, jar, and sign the runtime.
+compiles, jars, and signs the runtime.
 
 In order to read files from the users file system, the applet must be
 signed. The ant target expects a plupload certificate. The certificate
