@@ -60,7 +60,8 @@
       -dontwarn org.apache.**
       -injars      plupload.java.jar
       -outjars     plupload.java.min.jar
-      -libraryjars ${java.home}/lib/rt.jar:${java.home}/lib/plugin.jar
+      -libraryjars ${java.home}/lib/rt.jar
+      -libraryjars ${java.home}/lib/plugin.jar
       -keep public class plupload.Plupload
       -keep public class java.net.IDN
       -keepclassmembers class java.net.IDN{
