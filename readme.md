@@ -11,7 +11,7 @@ on this matter see [survey of large browser uploads](http://www.cabo.dk/blog/jak
 
 What you need to build Plupload Java Runtime
 --------------------------------------------
-* Install the Java JDK or JRE packages you can find it at: [http://java.sun.com/javase/downloads/index.jsp](http://java.sun.com/javase/downloads/index.jsp)
+* Install Java JDK 1.6: [http://java.sun.com/javase/downloads/index.jsp](http://java.sun.com/javase/downloads/index.jsp)
 * Install Apache Ant you can find it at: [http://ant.apache.org/](http://ant.apache.org/)
 * Add Apache Ant to your systems path environment variable, this is not required but makes it easier to issue commands to Ant without having to type the full path for it.
 
