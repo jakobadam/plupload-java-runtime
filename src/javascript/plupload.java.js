@@ -103,6 +103,8 @@
 
       $.applet.inject(appletContainer, {
         archive: url,
+        cache_archive: url,
+        cache_version: "1",
         id: escape(uploader.id),
         code: 'plupload.Plupload',
         callback: 'plupload.applet.pluploadjavatrigger'
