@@ -16,7 +16,13 @@ import javax.swing.UIManager;
 
 import netscape.javascript.JSObject;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.SystemLog;
+
 public class Plupload extends Applet2 {
+	
+	private static Log log = LogFactory.getLog(Plupload.class);
 	
 	private PluploadFile current_file;
 	private JFileChooser dialog;
@@ -25,7 +31,7 @@ public class Plupload extends Applet2 {
 	private String uploader_id;
 	private Map<String, PluploadFile> files;
 	private int id_counter = 0;
-
+	
 	@Override
 	public void init() {
 		super.init();
@@ -36,6 +42,8 @@ public class Plupload extends Applet2 {
 			e.printStackTrace();
 		}
 
+		SystemLog.currentLogLevel = Integer.parseInt(getParameter("log_level", /*LOG_LEVEL_ERROR*/"5"));
+		
 		files = new HashMap<String, PluploadFile>();
 		uploader_id = getParameter("id");
 
@@ -53,7 +61,7 @@ public class Plupload extends Applet2 {
 
 	@SuppressWarnings("unchecked")
 	public void setFileFilters(final String filters) {
-		System.out.println("setting filters" + filters);
+		log.debug("setFileFilters: " + filters);
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction() {
 				public Object run() throws IOException, Exception {
@@ -94,11 +102,11 @@ public class Plupload extends Applet2 {
 
 	}
 
-
 	// LiveConnect calls from JS
 	@SuppressWarnings("unchecked")
 	public void uploadFile(final String id, final String url,
 			final String cookie, final int chunk_size, final int retries) {
+		log.debug("uploadFile: id: " + id + " url: " + url + " cookie: " + cookie + " chunk_size: " + chunk_size + " retries: " + retries);
 		final PluploadFile file = files.get(id);
 		if (file != null) {
 			this.current_file = file;
@@ -133,7 +141,7 @@ public class Plupload extends Applet2 {
 
 	@SuppressWarnings("unchecked")
 	public void openFileDialog() {
-		System.out.println("opening dialog");
+		log.debug("opening dialog");
 		if (dialog_open) {
 			// FIXME: bring openDialog to front
 			return;
@@ -146,7 +154,7 @@ public class Plupload extends Applet2 {
 					public void run() {
 						int file_chose_return_value = dialog
 								.showOpenDialog(Plupload.this);
-						System.out.println("openDialog finished");
+						log.debug("openDialog finished");
 						// blocks until file selected
 						if (file_chose_return_value == JFileChooser.APPROVE_OPTION) {
 							for (File f : dialog.getSelectedFiles()) {
@@ -199,7 +207,6 @@ public class Plupload extends Applet2 {
 	}
 
 	private void publishIOError(Exception e) {
-		System.out.println("foo bar");
 		publishEvent(Event.IO_ERROR, new PluploadError(e.getMessage(), this.current_file.id));
 	}
 
@@ -208,7 +215,7 @@ public class Plupload extends Applet2 {
 	}
 
 	private void selectEvent(PluploadFile file) {
-		System.out.println("selectEvent");
+		log.debug("selectEvent");
 		// handles file add from file chooser
 		files.put(file.id + "", file);
 

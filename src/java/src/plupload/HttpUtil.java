@@ -8,6 +8,8 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpVersion;
@@ -22,10 +24,12 @@ import org.apache.http.util.CharArrayBuffer;
 
 public class HttpUtil {
 
+	private static Log log = LogFactory.getLog(HttpUtil.class);
+	
 	private static HttpClient httpclient;
 
 	public static Map<String, String> parse_qs(String qs) {
-		System.out.println("parsesing qs: " + qs);
+		log.debug("parsesing qs: " + qs);
 		// i.d, not handling the general case where a list is possible
 		Map<String, String> map = new HashMap<String, String>();
 		for (String param : qs.split("&")) {

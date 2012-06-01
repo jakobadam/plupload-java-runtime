@@ -1,7 +1,12 @@
 package plupload;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import netscape.javascript.JSObject;
 
 public class Applet2 extends java.applet.Applet{
+	
+	private static Log log = LogFactory.getLog(Applet2.class);
 	
 	private JSObject js;
 	private String callback;
@@ -34,7 +39,7 @@ public class Applet2 extends java.applet.Applet{
 		for(Object a : args){
 			js_args += ", '" + a.toString() + "'"; 
 		}		
-		System.out.println(callback + "(" + js_args + ")");
+		log.debug(callback + "(" + js_args + ")");
 		js.eval(callback + "(" + js_args + ")");
 	}
 }

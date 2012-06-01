@@ -47,7 +47,8 @@
           waitCount = 0, 
           container = document.body,
           features = this.getFeatures(),
-          url = uploader.settings.java_applet_url;
+          url = uploader.settings.java_applet_url,
+          log_level = uploader.settings.log_level || /*LOG_LEVEL_ERROR*/5;
 
       if(!features.java){
         callback({success : false});
@@ -107,7 +108,8 @@
         cache_version: "1",
         id: escape(uploader.id),
         code: 'plupload.Plupload',
-        callback: 'plupload.applet.pluploadjavatrigger'
+        callback: 'plupload.applet.pluploadjavatrigger',
+        log_level: log_level
       });
 
       uploader.bind("UploadFile", function(up, file) {
@@ -125,12 +127,7 @@
             abs_url += location.pathname.slice(0, location.pathname.lastIndexOf('/')) + '/' + settings.url;
           }
           
-          // converted to string since number type conversion is buggy in MRJ runtime
-          // In Firefox Mac (MRJ) runtime every number is a double
-        typeof(lookup[file.id]);
-
-        getApplet().uploadFile(lookup[file.id] + "", abs_url, document.cookie, settings.chunk_size, (settings.retries || 3));          
-
+          getApplet().uploadFile(lookup[file.id] + "", abs_url, document.cookie, settings.chunk_size || 0, settings.retries || 3);          
       });
    
       uploader.bind("SelectFiles", function(up){

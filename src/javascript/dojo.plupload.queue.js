@@ -77,7 +77,6 @@ dojo.require("dojo.NodeList-manipulate"); // NodeList::val()
     }
 
     uploader = new plupload.Uploader(plupload.extend({
-      dragdrop : true,
       container : id
     }, settings));
     
@@ -174,22 +173,10 @@ dojo.require("dojo.NodeList-manipulate"); // NodeList::val()
       $('a.plupload_start', target).toggleClass('plupload_disabled', !hasQueuedFiles || uploader.state === plupload.STARTED);
       $('span.plupload_total_file_size', target).html(plupload.formatSize(uploader.total.size));
       
-      // What plupload_add_text?
-      // if (uploader.total.queued === 0) {
-      //  $('span.plupload_add_text', target).text(_('Add files.'));
-      // } else {
-      //  $('span.plupload_add_text', target).text(uploader.total.queued + ' files queued.');
-      // }
-       
       // Scroll to end of file list
       fileList[0].scrollTop = fileList[0].scrollHeight;
       
       updateTotalProgress();
-      
-      // Re-add drag message if there is no files
-      if (!uploader.files.length && uploader.features.dragdrop && uploader.settings.dragdrop) {
-       d.place('<li class="plupload_droptext">' + _("Drag files here.") + '</li>', id + '_filelist', 'last');
-      }
     }//updateList
 
     // Event handlers

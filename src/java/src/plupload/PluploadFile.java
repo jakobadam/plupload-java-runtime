@@ -16,11 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.utils.URIUtils;
 
 public class PluploadFile /*extends Thread*/{
 
+	private static Log log = LogFactory.getLog(PluploadFile.class);
+	public static int DEFAULT_CHUNK_SIZE = 1048576; // 1MB
+	
 	public int id;
 	
 	private int chunk;			// current chunk number
@@ -45,7 +50,6 @@ public class PluploadFile /*extends Thread*/{
 	private HttpUploader uploader;
 
 	public PluploadFile(int id, File file) {
-		System.out.println("PluploadFile " + id + " " + file);
 		this.id = id;
 		this.name = file.getName().replace("\"", "\\\"").replace("'", "\\'");
 		this.size = file.length();
@@ -60,12 +64,21 @@ public class PluploadFile /*extends Thread*/{
 
 	protected void prepare(String upload_uri, int chunk_size, int retries, String cookie)
 			throws URISyntaxException, IOException {
+		log.debug("prepare: " + upload_uri + " " + chunk_size);
 		if(size == 0){
 			throw new IOException("Dude, file is empty!");
 		}
+		
 		uri = new URI(upload_uri);
 		uploader = new HttpUploader(retries, cookie);
-		this.chunk_size = chunk_size;
+		
+		if(chunk_size > 0){
+			this.chunk_size = chunk_size;
+		}
+		else{
+			this.chunk_size = DEFAULT_CHUNK_SIZE; 
+		}
+		
 		stream = new BufferedInputStream(new FileInputStream(file), chunk_size);
 		chunks = (size + chunk_size - 1) / chunk_size;
 		buffer = new byte[chunk_size];
@@ -73,14 +86,16 @@ public class PluploadFile /*extends Thread*/{
 		loaded = 0;
 	}
 
-	private void doUpload() throws ClientProtocolException, UnsupportedEncodingException, IOException, ParseException, URISyntaxException, NoSuchAlgorithmException{
+	private void doUpload() throws ClientProtocolException, UnsupportedEncodingException, IOException, ParseException, URISyntaxException, NoSuchAlgorithmException{	
 		if(overwrite){
+			log.debug("doUpload: overwriting");
 			uploadChunks();			
 		}
 		else {
 			Map<String, String> result = uploader.probe(getProbeUri());	
 			String server_status = result.get("status");
-				
+			log.debug("doUpload: server status: " + server_status);
+			
 			if (server_status.equals("uploading")) {
 				onFileUploading(result); 
 			} else if (server_status.equals("unknown")) {
@@ -107,7 +122,7 @@ public class PluploadFile /*extends Thread*/{
 			uploadChunks();
 		}
 		else {
-			System.out.println("File modified starting over ...");
+			log.info("onFileUploading: File modified starting over ...");
 			// file is modified for sure, so don't run through all the chunks
 			uploadChunks();
 		}
@@ -115,7 +130,7 @@ public class PluploadFile /*extends Thread*/{
 	
 	public void upload(String upload_uri, int chunk_size, int retries, String cookie)
 			throws IOException, NoSuchAlgorithmException, URISyntaxException, ParseException {
-		
+		log.debug("upload: " + upload_uri + " " + chunk_size + " " + retries + " " + cookie);
 		prepare(upload_uri, chunk_size, retries, cookie);
 		
 		Thread uploadThread = new Thread(){
@@ -139,7 +154,7 @@ public class PluploadFile /*extends Thread*/{
 	}
 
 	public void skipUploadedChunks() throws IOException {
-		System.out.println("Skipping already uploaded chunks");
+		log.info("skipUploadedChunks: skipping already uploaded chunks");
 		while(chunk <= chunk_server){
 			int bytes_read = stream.read(buffer);
 			// the finished check and integrity check is done in JS
@@ -154,13 +169,13 @@ public class PluploadFile /*extends Thread*/{
 	}
 
 	public boolean checkIntegrity() {
-		System.out.println("Checking integrity ...");
+		log.info("Checking integrity ...");
 		return HashUtil.hexdigest(md5_total, true).equals(md5hex_server_total);
 	}
 
 	public void uploadChunks() throws NoSuchAlgorithmException,
 			ClientProtocolException, URISyntaxException, IOException {
-		System.out.println("Uploading chunks ...");
+		log.debug("uploadChunks: uploading ...");
 		while(chunk != chunks){
 			int bytes_read = stream.read(buffer);
 			MessageDigest md5_chunk = MessageDigest.getInstance("MD5");
