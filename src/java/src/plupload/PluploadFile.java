@@ -64,7 +64,7 @@ public class PluploadFile /*extends Thread*/{
 
 	protected void prepare(String upload_uri, int chunk_size, int retries, String cookie)
 			throws URISyntaxException, IOException {
-		log.debug("prepare: " + upload_uri + " " + chunk_size);
+		log.info("prepare trying to fetch info from: " + upload_uri);
 		if(size == 0){
 			throw new IOException("Dude, file is empty!");
 		}
@@ -88,13 +88,13 @@ public class PluploadFile /*extends Thread*/{
 
 	private void doUpload() throws ClientProtocolException, UnsupportedEncodingException, IOException, ParseException, URISyntaxException, NoSuchAlgorithmException{	
 		if(overwrite){
-			log.debug("doUpload: overwriting");
+			log.info("doUpload: overwriting");
 			uploadChunks();			
 		}
 		else {
 			Map<String, String> result = uploader.probe(getProbeUri());	
 			String server_status = result.get("status");
-			log.debug("doUpload: server status: " + server_status);
+			log.info("doUpload: server status: " + server_status);
 			
 			if (server_status.equals("uploading")) {
 				onFileUploading(result); 
@@ -109,6 +109,7 @@ public class PluploadFile /*extends Thread*/{
 	}
 	
 	private void onFileUploading(Map<String, String> result) throws IOException, NoSuchAlgorithmException, ParseException, URISyntaxException{
+		log.info("onFileUpload: Status from server: " + result);
 		chunk_server = Integer.parseInt(result.get("chunk"));
 		int chunks_server = Integer.parseInt(result.get("chunks"));
 		if (chunks_server == chunks) { 
@@ -130,7 +131,7 @@ public class PluploadFile /*extends Thread*/{
 	
 	public void upload(String upload_uri, int chunk_size, int retries, String cookie)
 			throws IOException, NoSuchAlgorithmException, URISyntaxException, ParseException {
-		log.debug("upload: " + upload_uri + " " + chunk_size + " " + retries + " " + cookie);
+		log.info("upload: " + upload_uri + " " + chunk_size + " " + retries + " " + cookie);
 		prepare(upload_uri, chunk_size, retries, cookie);
 		
 		Thread uploadThread = new Thread(){
