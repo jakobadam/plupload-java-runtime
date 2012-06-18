@@ -86,16 +86,24 @@
       });
 
       uploader.bind("Applet:Init", function() {
-        var filters;
-       
+        var filters = uploader.settings.filters;
+        var extensions = [];
+        var description = "";
+
         initialized = true;
 
-        if(uploader.settings.filters){
-          filters = [];
-          for(var i = 0, len = uploader.settings.filters.length; i < len; i++){
-            filters.push(uploader.settings.filters[i].extensions);
+        if(filters.length > 0){
+          // On the Java side we can only set one filter
+          // pick the first description and add all extensions
+          description = filters[0].title;
+          for(var i = 0, len = filters.length; i < len; i++){
+              var filter = filters[i];
+              var filterExtensions = filter.extensions.split(',');
+              for(var j = 0; j < filterExtensions.length; j++){
+                  extensions.push(filterExtensions[j]);
+              }
           }
-          getApplet().setFileFilters(filters.join(","));          
+          getApplet().setFileFilter(description, extensions);
         }
         callback({success : true});
       });

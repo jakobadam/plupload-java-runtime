@@ -7,12 +7,14 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import netscape.javascript.JSObject;
 
@@ -20,6 +22,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.SystemLog;
 
+/**
+ * Plupload Java runtime.
+ *
+ * This class is optimized by proguard. Unused members are striped by
+ * proguard.
+ *
+ * Therefore members to be used from JS should be specified in build.xml
+ */
 public class Plupload extends Applet2 {
 	
 	private static Log log = LogFactory.getLog(Plupload.class);
@@ -35,7 +45,6 @@ public class Plupload extends Applet2 {
 	@Override
 	public void init() {
 		super.init();
-		
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
@@ -60,34 +69,13 @@ public class Plupload extends Applet2 {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void setFileFilters(final String filters) {
-		log.debug("setFileFilters: " + filters);
+	public void setFileFilter(final String description, final String[] filters) {
+		log.debug("setFileFilter: " + description + " " + Arrays.toString(filters));
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction() {
 				public Object run() throws IOException, Exception {
-					dialog
-							.setFileFilter(new javax.swing.filechooser.FileFilter() {
-
-								@Override
-								public String getDescription() {
-									// TODO Auto-generated method stub
-									return null;
-								}
-
-								@Override
-								public boolean accept(File f) {
-									if (f.isDirectory()) {
-										return true;
-									}
-									for (String filter : filters.split(",")) {
-										if (f.getName().toLowerCase().endsWith(
-												filter.toLowerCase())) {
-											return true;
-										}
-									}
-									return false;
-								}
-							});
+					FileNameExtensionFilter filter = new FileNameExtensionFilter(description, filters);
+					dialog.setFileFilter(filter);
 					return null;
 				}
 			});

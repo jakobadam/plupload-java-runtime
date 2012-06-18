@@ -68,7 +68,7 @@
        java.lang.String toUnicode(java.lang.String);
       }
       -keepclassmembers class plupload.Plupload {
-        void setFileFilters(java.lang.String);
+        void setFileFilter(java.lang.String,java.lang.String[]);
         void uploadFile(java.lang.String, java.lang.String, java.lang.String, int, int);
         void removeFile(java.lang.String);
         void clearFiles();
