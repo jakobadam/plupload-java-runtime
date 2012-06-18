@@ -39,7 +39,7 @@
 
     init : function(uploader, callback) {
 
-      var applet,
+      var pluploadApplet,
           appletContainer,
           appletVars,
           lookup = {},
@@ -56,10 +56,10 @@
       }
 
       function getApplet() {
-        if(!applet){
-          applet = document.getElementById(uploader.id);
+        if(!pluploadApplet){
+          pluploadApplet = document.getElementById(uploader.id);
         }
-        return applet;
+        return pluploadApplet;
       }
 
       function waitForAppletToLoadIn5SecsErrorOtherwise() {
