@@ -4,7 +4,7 @@
 (function($, plupload){
 
   var uploadInstances = {};
-      
+
   plupload.applet = {
 
     pluploadjavatrigger : function(eventname, id, fileobjstring) {
@@ -24,9 +24,9 @@
 
     /**
      * Returns supported features for the Java runtime.
-     * 
+     *
      * @return {Object} Name/value object with supported features.
-     */                                                   
+     */
 
     getFeatures : function() {
 
@@ -35,16 +35,16 @@
         chunks: true,
         progress: true
       };
-    },    
-    
+    },
+
     init : function(uploader, callback) {
 
       var applet,
-          appletContainer, 
-          appletVars, 
+          appletContainer,
+          appletVars,
           lookup = {},
-          initialized, 
-          waitCount = 0, 
+          initialized,
+          waitCount = 0,
           container = document.body,
           features = this.getFeatures(),
           url = uploader.settings.java_applet_url,
@@ -67,19 +67,19 @@
         if (waitCount++ > 5000) {
           callback({success : false});
           return;
-        }      
+        }
         if (!initialized) {
           setTimeout(waitForAppletToLoadIn5SecsErrorOtherwise, 1);
         }
       }
-      
+
       uploadInstances[uploader.id] = uploader;
       appletContainer = document.createElement('div');
       appletContainer.id = uploader.id + '_applet_container';
       appletContainer.className = 'plupload applet';
 
       plupload.extend(appletContainer.style, {
-        // move the 1x1 pixel out of the way. 
+        // move the 1x1 pixel out of the way.
         position : 'absolute',
         left: '-9999px',
         zIndex : -1
@@ -110,7 +110,7 @@
 
       document.body.appendChild(appletContainer);
 
-      $.applet.inject(appletContainer, {
+      applet.inject(appletContainer, {
         archive: url,
         cache_archive: url,
         cache_version: "1",
@@ -134,10 +134,10 @@
             // relative
             abs_url += location.pathname.slice(0, location.pathname.lastIndexOf('/')) + '/' + settings.url;
           }
-          
-          getApplet().uploadFile(lookup[file.id] + "", abs_url, document.cookie, settings.chunk_size || 0, settings.retries || 3);          
+
+          getApplet().uploadFile(lookup[file.id] + "", abs_url, document.cookie, settings.chunk_size || 0, settings.retries || 3);
       });
-   
+
       uploader.bind("SelectFiles", function(up){
         getApplet().openFileDialog();
       });
@@ -168,15 +168,15 @@
         id = plupload.guid();
         lookup[id] = file.id;
         lookup[file.id] = id;
-        
+
         files.push(new plupload.File(id, file.name, file.size));
-        
+
         // Trigger FilesAdded event if we added any
         if (files.length) {
           uploader.trigger("FilesAdded", files);
         }
       });
-      
+
       uploader.bind("Applet:GenericError", function(up, err) {
         uploader.trigger('Error', {
           code : plupload.GENERIC_ERROR,
