@@ -34,4 +34,4 @@ Note: the build file expects that the java key store password is 123456.
 
 Running
 -------
-See [Plupload Python Backend](https://github.com/jakobadam/plupload-python-backend)
+See [Plupload Backends](https://github.com/jakobadam/plupload-backends)
