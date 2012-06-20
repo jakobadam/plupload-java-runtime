@@ -113,7 +113,7 @@
       applet.inject(appletContainer, {
         archive: url,
         cache_archive: url,
-        cache_version: "1",
+        cache_version: "20062012",
         id: escape(uploader.id),
         code: 'plupload.Plupload',
         callback: 'plupload.applet.pluploadjavatrigger',
