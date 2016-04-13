@@ -1,4 +1,4 @@
-Plupload Java Runtime - Unlimited Sized Streamed Integrity Checked Resumeable Uploads
+Plupload Java Runtime (deprecated) - Unlimited Sized Streamed Integrity Checked Resumeable Uploads
 =====================================================================================
 
 What is Plupload Java Runtime
@@ -7,7 +7,7 @@ Plupload Java Runtime is an addition to plupload which lets people
 upload files of unlimited size. All other technologies (Flash, HTML5,
 HTML4) suffers when it comes to uploading large files. The only
 possible cross browser means to upload large files is Java - for more
-on this matter see [survey of large browser uploads](http://www.cabo.dk/blog/jakobs-blog/survey-of-large-browser-uploads).
+on this matter see [survey of large browser uploads](http://blog.aarhusworks.com/survey-of-large-browser-uploads/).
 
 What you need to build Plupload Java Runtime
 --------------------------------------------
